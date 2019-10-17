@@ -1,0 +1,12 @@
+﻿  Area.cpp
+  Game.cpp
+C:\Users\fabif\source\repos\GeneticGravityRun\Game.h(13,10): warning C4067: Unerwartete Token nach Präprozessordirektive - Zeilenvorschub erwartet.
+  main.cpp
+C:\Users\fabif\source\repos\GeneticGravityRun\Player.h(3,10): warning C4067: Unerwartete Token nach Präprozessordirektive - Zeilenvorschub erwartet.
+C:\Users\fabif\source\repos\GeneticGravityRun\Game.h(13,10): warning C4067: Unerwartete Token nach Präprozessordirektive - Zeilenvorschub erwartet.
+  Platform.cpp
+  Player.cpp
+C:\Users\fabif\source\repos\GeneticGravityRun\Player.h(3,10): warning C4067: Unerwartete Token nach Präprozessordirektive - Zeilenvorschub erwartet.
+  Code wird generiert...
+C:\Users\fabif\source\repos\GeneticGravityRun\Player.h(3,10): warning C4067: Unerwartete Token nach Präprozessordirektive - Zeilenvorschub erwartet.
+sfml-graphics-d.lib(sfml-graphics-d-2.dll) : fatal error LNK1112: Modul-Computertyp "x64" steht in Konflikt mit dem Zielcomputertyp "x86".
