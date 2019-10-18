@@ -28,6 +28,8 @@ void Area::init(int size, Vector2f position)
 		platforms[i].init(10, Vector2f(position.x, position.y + i *64), false);
 	}
 	this->position = position;
+	originalPosition = calculatePlatformPosition(position);
+	originalPosition.y = 0;
 	std::cout << "Area created \n";
 }
 
@@ -123,4 +125,13 @@ void Area::check4Collision(Player &player)
 float Area::lenght(Vector2f vector) {
 
 	return std::sqrt(vector.x * vector.x + vector.y * vector.y);
+}
+
+void Area::reset()
+{
+	background.setPosition(originalPosition);
+	for (int i = 0; i < platforms.size(); i++) {
+		platforms[i].reset();
+	}
+
 }

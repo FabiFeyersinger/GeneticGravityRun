@@ -5,8 +5,6 @@
 Platform::Platform()
 {
 	if (!spritesheet.loadFromFile("Images\\Level\\Blocks.png")) std::cout << "spritesheet not loaded \n";
-	platformLenght = 0;
-
 }
 
 Platform::~Platform()
@@ -17,16 +15,16 @@ void Platform::init(int size, Vector2f position, bool isCeiling)
 {
 	this->isCeiling = isCeiling;
 	platformLenght = size * 32;
-	std::cout << blocks.size() << std::endl;
 	blocks.resize(size);
-	std::cout << blocks.size() << std::endl;
+	//std::cout << blocks.size() << std::endl;
 	for (int i = 0; i < size; i++) {
 		blocks[i] = FillSprites(i, size-1);
 		blocks[i].setPosition(position.x + 32 * i, position.y);
 	}
 	hitbox.setSize(Vector2f(size * 32, 32));
 	hitbox.setPosition(position);
-	std::cout << "Platform created \n";
+	originalPosition = position;
+	//std::cout << "Platform created \n";
 }
 
 void Platform::updatePosition(float)
@@ -83,6 +81,11 @@ Vector2f Platform::getPosition()
 float Platform::getLenght()
 {
 	return platformLenght;
+}
+
+void Platform::reset()
+{
+	init(blocks.size(), originalPosition, isCeiling);
 }
 
 Sprite Platform::FillSprites(int i, int size)

@@ -7,7 +7,7 @@ class Area
 {
 private:
 	std::vector<Platform> platforms;
-	Vector2f position;
+	Vector2f position, originalPosition;
 	float totalLenght;
 	Texture backgroundTexture;
 	Sprite background;
@@ -26,6 +26,8 @@ public:
 	Sprite getBackground();
 	void check4Collision(Player &player);
 	float lenght(Vector2f);
+
+	void reset();
 
 };
 

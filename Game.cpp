@@ -22,6 +22,13 @@ Game::Game() :
 {
 	setupFontAndText(); // load font 
 	setupSprite(); // load texture
+
+	for (int i = 0; i < 30; i++) {
+		srand(time(NULL));
+		Player player = Player();
+		player.setColor(sf::Color(rand() % 255, rand() % 255, rand() % 255));
+		population.players.push_back(player);
+	}
 }
 
 /// <summary>
@@ -91,10 +98,6 @@ void Game::processKeys(sf::Event t_event)
 	{
 		m_exitGame = true;
 	}
-	if (sf::Keyboard::Space == t_event.key.code) 
-	{
-		player.jump();
-	}
 }
 
 /// <summary>
@@ -108,8 +111,7 @@ void Game::update(sf::Time dt)
 		m_window.close();
 	}
 
-	player.updatePosition(dt.asSeconds());
-	area1.check4Collision(player);
+	population.update(dt.asSeconds(), area1);
 	area1.updatePosition(dt.asSeconds());
 }
 
@@ -120,8 +122,10 @@ void Game::render()
 {
 	m_window.clear(sf::Color::Black);
 	m_window.draw(area1.getBackground());
-	if (player.isDead()) {
-		m_window.close();
+	if (population.allDotsDead()) {
+		createNewPopulation();
+		population.reset();
+		area1.reset();
 	}
 	std::vector<Sprite> areaSprites = area1.drawBlocks();
 	for (int i = 0; i < areaSprites.size(); i++) {
@@ -131,8 +135,24 @@ void Game::render()
 	//for (int i = 0; i < areaSprites.size(); i++) {
 	//	m_window.draw(areaSprites[i]);
 	//}
-	m_window.draw(player.getShape());
+	for (int i = 0; i < population.players.size(); i++) {
+		m_window.draw(population.players[i].getShape());
+	}
 	m_window.display();
+}
+
+void Game::createNewPopulation()
+{
+	population.calculateFitness();
+	Population newGen = Population(population.players.size());
+	for (int i = 0; i < population.players.size(); i++) {
+		Player parentOne = population.naturalSelection();
+		Player parentTwo = population.naturalSelection();
+		Player child = population.mutate(parentOne, parentTwo);
+		child.setColor(parentOne.getShape().getFillColor());
+		newGen.players.push_back(child);
+	}
+	population.replace(newGen);
 }
 
 /// <summary>

@@ -10,9 +10,10 @@ class Platform
 {
 private: 
 	Texture spritesheet;
+	Vector2f originalPosition;
 	Sprite FillSprites(int,int);
 	bool isCeiling = false;
-	float platformLenght;
+	float platformLenght = 0;
 	RectangleShape hitbox;
 
 
@@ -29,5 +30,8 @@ public:
 	RectangleShape getHitbox();
 	Vector2f getPosition();
 	float getLenght();
+
+	void reset();
+
 };
 

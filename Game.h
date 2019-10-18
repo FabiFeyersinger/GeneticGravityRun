@@ -10,8 +10,8 @@
 /// Don't forget the endif at the bottom
 /// </summary>
 #include <SFML/Graphics.hpp>
-#include "Player.h";
 #include "Area.h";
+#include "Population.h";
 
 class Game
 {
@@ -29,7 +29,7 @@ private:
 	void processKeys(sf::Event t_event);
 	void update(sf::Time t_deltaTime);
 	void render();
-
+	void createNewPopulation();
 	void setupFontAndText();
 	void setupSprite();
 
@@ -37,8 +37,8 @@ private:
 	sf::Font m_ArialBlackfont; // font used by message
 	sf::Text m_welcomeMessage; // text used for message on screen
 	sf::Texture playerTexture; 
-	Player player; 
 	Area area1;
+	Population population;
 	bool m_exitGame; // control exiting game
 };
 
