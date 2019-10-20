@@ -16,6 +16,7 @@ public:
 	float updatePosition(float);
 	void updateGravity(float);
 	void setColor(Color);
+	Color getColor();
 	Vector2f getPosition();
 	void platformCollide(float);
 	bool getGravity();

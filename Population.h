@@ -17,7 +17,7 @@ public:
 
 	void calculateFitness();
 	Player naturalSelection();
-	Player mutate(Player , Player);
+	Player mutate(Player &parentOne, Player &parentTwo);
 	void update(float, Area &area);
 	void reset();
 	void replace(Population &newGen);

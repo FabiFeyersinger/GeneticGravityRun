@@ -21,7 +21,7 @@ void Population::calculateFitness()
 	for (int i = 0; i < players.size(); i++) {
 		players[i].normalizeFitness(fitnessSum);
 	}
-	std::cout << fitnessSum << std::endl;
+	//std::cout << "FitnessSum: " << fitnessSum << std::endl;
 }
 
 Player Population::naturalSelection()
@@ -31,6 +31,7 @@ Player Population::naturalSelection()
 	float pool = (float)(rand() % 10000) / 10000.f;
 	for (int i = 0; i < players.size(); i++) {
 		if (players[i].getFitness() > pool) {
+			//std::cout << "Color:" << players[i].getColor().toInteger() << std::endl;
 			return players[i];
 		}
 		else {
@@ -40,10 +41,12 @@ Player Population::naturalSelection()
 	return players[players.size() - 1];
 }
 
-Player Population::mutate(Player parentOne, Player parentTwo)
+Player Population::mutate(Player &parentOne, Player &parentTwo)
 {
 	Player child = Player();
-	child.getShape().setFillColor(parentOne.getShape().getFillColor() + parentTwo.getShape().getFillColor());
+	//std::cout << "Color ParentOne:" << parentOne.getColor().toInteger() << std::endl;
+	child.setColor(parentOne.getColor());
+	std::cout << "Color Child:" << child.getColor().toInteger() << std::endl;
 	child.mutate(parentOne.getDNA(), parentTwo.getDNA());
 	return child;
 }
@@ -69,6 +72,7 @@ void Population::replace(Population &newGen)
 {
 	for (int i = 0; i < players.size(); i++) {
 		players[i] = newGen.players[i];
+		players[i].setColor(newGen.players[i].getColor());
 	}
 }
 

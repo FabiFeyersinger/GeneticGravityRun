@@ -46,6 +46,11 @@ void Player::setColor(Color fillColor)
 	shape.setFillColor(fillColor);
 }
 
+Color Player::getColor()
+{
+	return shape.getFillColor();
+}
+
 Vector2f Player::getPosition()
 {
 	return position;
@@ -82,7 +87,8 @@ float Player::getLenght()
 
 float Player::calculateFitness()
 {
-	return fitness * 30000;
+	fitness *= 30000;
+	return fitness;
 }
 
 void Player::normalizeFitness(float sum)
@@ -111,7 +117,7 @@ void Player::useDNA(float dt)
 {
 	if (dna.getLenght() > dna.step) {
 		if (dna.inputs[dna.step] < dt) {
-			std::cout << "I jump now \n";
+			//std::cout << "I jump now \n";
 			jump();
 			dna.step++;
 		}

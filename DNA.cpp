@@ -33,7 +33,7 @@ void DNA::randomize()
 		inputs[i] = ran;
 	}
 
-	std::cout << "First jump should be :" << inputs[0] << std::endl;
+	//std::cout << "First jump should be :" << inputs[0] << std::endl;
 }
 
 float DNA::getDivider()

@@ -149,10 +149,11 @@ void Game::createNewPopulation()
 		Player parentOne = population.naturalSelection();
 		Player parentTwo = population.naturalSelection();
 		Player child = population.mutate(parentOne, parentTwo);
-		child.setColor(parentOne.getShape().getFillColor());
-		newGen.players.push_back(child);
+		newGen.players[i] = child;
+		std::cout << i << " Child in Game.cpp Color: " << newGen.players[i].getColor().toInteger() << std::endl;
 	}
 	population.replace(newGen);
+	std::cout << "New Population: \n";
 }
 
 /// <summary>
