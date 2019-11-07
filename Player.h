@@ -9,7 +9,7 @@ class Player
 	DNA dna;
 	RectangleShape shape;
 	Vector2f position;
-	float gravity, speed, playerLenght = 32, fitness = 0;
+	float gravity, speed, playerLenght = 32, fitness = 0, dtcounter = 0;
 	bool up = false, jumping = false, dead = false;
 
 public:
@@ -31,7 +31,8 @@ public:
 	void useDNA(float);
 	void reset();
 	DNA getDNA();
-	void mutate(DNA, DNA);
+	void mutate(DNA &parentOne, DNA &parentTwo);
+	void mutate(DNA parent);
 	RectangleShape getShape();
 	Player();
 	~Player();

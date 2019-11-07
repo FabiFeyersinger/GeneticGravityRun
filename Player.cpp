@@ -9,6 +9,7 @@ Player::Player()
 	gravity = 416.f;
 	position = Vector2f(10, 256);
 	dna = DNA(100);
+	//std::cout << "My first jump is at: " << dna.inputs[0] << std::endl;
 }
 
 Player::~Player()
@@ -19,7 +20,7 @@ float Player::updatePosition(float dt)
 {
 	if (position.y < 0 || position.y > 512) dead = true;
 	if (!dead) {
-		fitness += dt;
+		fitness++;
 		useDNA(dt);
 	}
 	position.x += speed * dt;
@@ -116,13 +117,14 @@ void Player::falls()
 void Player::useDNA(float dt)
 {
 	if (dna.getLenght() > dna.step) {
-		if (dna.inputs[dna.step] < dt) {
+		if (dna.inputs[dna.step] < dt + dtcounter) {
 			//std::cout << "I jump now \n";
 			jump();
 			dna.step++;
+			dtcounter = 0;
 		}
 		else {
-			dna.inputs[dna.step] -= dt;
+			dtcounter += dt;
 		}
 	}
 
@@ -142,7 +144,7 @@ DNA Player::getDNA()
 	return dna;
 }
 
-void Player::mutate(DNA parentOne, DNA parentTwo)
+void Player::mutate(DNA &parentOne, DNA &parentTwo)
 {
 	std::chrono::microseconds ms = std::chrono::duration_cast<std::chrono::microseconds>(std::chrono::system_clock::now().time_since_epoch());
 	srand(ms.count());
@@ -151,9 +153,28 @@ void Player::mutate(DNA parentOne, DNA parentTwo)
 		if (rand() % 2) dna.inputs[i] = parentOne.inputs[i];
 		else dna.inputs[i] = parentTwo.inputs[i];
 
-		float mutation = (float)(rand() % 10000) / 10000.f;
+		float mutation = rand() % 10000;
+		mutation = mutation / 10000.f;
 		if (mutation < mutationRate) {
 			dna.inputs[i] = (float)(rand() % dna.getPosV()) / dna.getDivider();
+		}
+	}
+}
+
+void Player::mutate(DNA parent)
+{
+	std::chrono::microseconds ms = std::chrono::duration_cast<std::chrono::microseconds>(std::chrono::system_clock::now().time_since_epoch());
+	srand(ms.count());
+	float mutationRate = 0.01;
+	for (int i = 0; i < dna.getLenght(); i++) {
+		float mutation = rand() % 10000;
+		mutation = mutation / 10000.f;
+		if (mutation < mutationRate) {
+			dna.inputs[i] = (float)(rand() % dna.getPosV()) / dna.getDivider();
+			std::cout << "Mutation happend because :" << mutation << " < "  << mutationRate << std::endl;
+		}
+		else {
+			dna.inputs[i] = parent.inputs[i];
 		}
 	}
 }

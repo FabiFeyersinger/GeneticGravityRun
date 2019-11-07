@@ -9,6 +9,7 @@ private:
 	std::vector<Platform> platforms;
 	Vector2f position, originalPosition;
 	float totalLenght;
+	int alreadyPassedPlatforms = 0;
 	Texture backgroundTexture;
 	Sprite background;
 	Vector2f calculatePlatformPosition(Vector2f);

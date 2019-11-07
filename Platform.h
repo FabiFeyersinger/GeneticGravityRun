@@ -13,6 +13,8 @@ private:
 	Vector2f originalPosition;
 	Sprite FillSprites(int,int);
 	bool isCeiling = false;
+	bool visible = false;
+	bool passed = false;
 	float platformLenght = 0;
 	RectangleShape hitbox;
 
@@ -25,11 +27,14 @@ public:
 	void updatePosition(float);
 	bool checkCollision(Player &player);
 	std::vector<Sprite> drawBlocks();
-	bool getIsCeiling();
 	float lenght(Vector2f);
 	RectangleShape getHitbox();
 	Vector2f getPosition();
 	float getLenght();
+	bool isVisible();
+	void setVisible();
+	bool hasPassed();
+	bool getIsCeiling();
 
 	void reset();
 

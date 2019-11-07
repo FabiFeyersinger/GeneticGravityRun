@@ -30,6 +30,8 @@ void DNA::randomize()
 	for (int i = 0; i < inputs.size(); i++) {
 		float ran = rand() % possibleValues;
 		ran = ran / divider;
+		if (ran < 0.5) ran += 0.5;
+		if (ran > 5) ran = 4.9;
 		inputs[i] = ran;
 	}
 

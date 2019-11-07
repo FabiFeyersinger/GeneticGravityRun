@@ -35,15 +35,18 @@ void Area::init(int size, Vector2f position)
 
 std::vector<Sprite> Area::drawBlocks()
 {
-	std::vector<Sprite> draw(50);
+	std::vector<Sprite> draw;
 	int k = 0;
-	for(int i = 0; i < platforms.size(); i++)
+	for(int i = alreadyPassedPlatforms; i < platforms.size(); i++)
 	{
-		std::vector<Sprite> platformSprites = platforms[i].drawBlocks();
-		for (int j = 0; j < platformSprites.size(); j++) {
-			draw[k] = platformSprites[j];
-			k++;
+		if (platforms[i].hasPassed()) alreadyPassedPlatforms = i;
+		if (platforms[i].isVisible()) {
+			std::vector<Sprite> platformSprites = platforms[i].drawBlocks();
+			for (int j = 0; j < platformSprites.size(); j++) {
+				draw.push_back(platformSprites[j]);
+			}
 		}
+		else break;
 	}
 	return draw;
 }
@@ -58,14 +61,16 @@ void Area::addPlatform(int size, Vector2f position)
 	platforms.resize(formerSize + 1);
 	for (int i = 0; i < formerSize; i++) {
 		platforms[i].init(oldPlatforms[i].blocks.size(), oldPlatforms[i].blocks[0].getPosition(), oldPlatforms[i].getIsCeiling());
+		if (platforms[i].getHitbox().getPosition().x <= 1024U)platforms[i].setVisible();
 	}
 	platforms[formerSize].init(size, position, isCeiling);
+	if (platforms[formerSize].getHitbox().getPosition().x <= 1024U)platforms[formerSize].setVisible();
 }
 
 void Area::updatePosition(float dt)
 {
 	for (int i = 0; i < platforms.size(); i++) {
-		platforms[i].updatePosition(dt);
+		if(!platforms[i].hasPassed()) platforms[i].updatePosition(dt);
 	}
 	this->position.x -= 2;
 	background.move(-2, 0);
@@ -115,8 +120,10 @@ void Area::check4Collision(Player &player)
 {
 	bool platformFound = false;
 	for (int i = 0; i < platforms.size(); i++) {
+		if (!platforms[i].hasPassed() && platforms[i].isVisible()) {
 			platformFound = platforms[i].checkCollision(player);
 			if (platformFound) break;
+		}
 	}
 	if (!platformFound) player.falls();
 }
@@ -130,6 +137,7 @@ float Area::lenght(Vector2f vector) {
 void Area::reset()
 {
 	background.setPosition(originalPosition);
+	alreadyPassedPlatforms = 0;
 	for (int i = 0; i < platforms.size(); i++) {
 		platforms[i].reset();
 	}

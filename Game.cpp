@@ -23,11 +23,12 @@ Game::Game() :
 	setupFontAndText(); // load font 
 	setupSprite(); // load texture
 
-	for (int i = 0; i < 30; i++) {
+	for (int i = 0; i < 200; i++) {
 		srand(time(NULL));
 		Player player = Player();
 		player.setColor(sf::Color(rand() % 255, rand() % 255, rand() % 255));
 		population.players.push_back(player);
+		//std::cout << "PopulationMember Nr" << i << " : " << population.players[i].getDNA().inputs[0] << std::endl;
 	}
 }
 
@@ -144,16 +145,19 @@ void Game::render()
 void Game::createNewPopulation()
 {
 	population.calculateFitness();
-	Population newGen = Population(population.players.size());
+	Population newGen = Population();
 	for (int i = 0; i < population.players.size(); i++) {
-		Player parentOne = population.naturalSelection();
-		Player parentTwo = population.naturalSelection();
+		//std::cout << "PopulationMember Nr" << i << " : " << population.players[i].getDNA().inputs[0] << std::endl;
+		Player parentOne = population.naturalSelection(population);
+		Player parentTwo = population.naturalSelection(population);
 		Player child = population.mutate(parentOne, parentTwo);
-		newGen.players[i] = child;
-		std::cout << i << " Child in Game.cpp Color: " << newGen.players[i].getColor().toInteger() << std::endl;
+		//Player child = population.mutate(parentOne);
+		newGen.players.push_back(child);
+		//std::cout << i << " Child in Game.cpp jump: " << newGen.players[i].getDNA().inputs[0] << std::endl;
 	}
 	population.replace(newGen);
-	std::cout << "New Population: \n";
+	genCount++;
+	std::cout << "New Population: " << genCount << std::endl;
 }
 
 /// <summary>
@@ -174,7 +178,11 @@ void Game::setupSprite()
 	area1.addPlatform(6, Vector2f(600, 140));
 	area1.addPlatform(9, Vector2f(736, 0));
 	area1.addPlatform(5, Vector2f(1024, 480));
-	//area1.addPlatform(2, Vector2f(1100, 0));
+	area1.addPlatform(5, Vector2f(1200, 0));
+	area1.addPlatform(5, Vector2f(1400, 300));
+	area1.addPlatform(5, Vector2f(1600, 480));
+	area1.addPlatform(9, Vector2f(1900, 0));
+
 
 	//area2.init(1, Vector2f(2048, 480));
 	//area2.addPlatform(5, Vector2f(2200, 0));

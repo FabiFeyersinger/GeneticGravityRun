@@ -40,6 +40,7 @@ private:
 	Area area1;
 	Population population;
 	bool m_exitGame; // control exiting game
+	int genCount = 1;
 };
 
 #endif // !GAME_HPP

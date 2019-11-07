@@ -10,14 +10,16 @@ class Population
 public:
 	std::vector<Player> players;
 	float fitnessSum = 0;
+	Player champ;
 
 	Population() {};
 	Population(int);
 	~Population();
 
 	void calculateFitness();
-	Player naturalSelection();
+	Player naturalSelection(Population &pop);
 	Player mutate(Player &parentOne, Player &parentTwo);
+	Player mutate(Player& parent);
 	void update(float, Area &area);
 	void reset();
 	void replace(Population &newGen);

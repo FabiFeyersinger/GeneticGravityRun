@@ -24,6 +24,8 @@ void Platform::init(int size, Vector2f position, bool isCeiling)
 	hitbox.setSize(Vector2f(size * 32, 32));
 	hitbox.setPosition(position);
 	originalPosition = position;
+	visible = false;
+	passed = false;
 	//std::cout << "Platform created \n";
 }
 
@@ -34,6 +36,8 @@ void Platform::updatePosition(float)
 	{
 		blocks[i].move(-2, 0);
 	}
+	if (hitbox.getPosition().x <= 1024U) this->visible = true;
+	if (hitbox.getPosition().x + hitbox.getSize().x <= 0) this->passed = true;
 }
 
 bool Platform::checkCollision(Player &player)
@@ -60,7 +64,14 @@ bool Platform::checkCollision(Player &player)
 
 std::vector<Sprite> Platform::drawBlocks()
 {
-	return blocks;
+	std::vector<Sprite> visibleBlocks;
+
+	for (int i = 0; i < blocks.size(); i++) {
+		if (blocks[i].getPosition().x <= 1024U) visibleBlocks.push_back(blocks[i]);
+	}
+
+
+	return visibleBlocks;
 }
 
 bool Platform::getIsCeiling()
@@ -81,6 +92,21 @@ Vector2f Platform::getPosition()
 float Platform::getLenght()
 {
 	return platformLenght;
+}
+
+bool Platform::isVisible()
+{
+	return visible;
+}
+
+void Platform::setVisible()
+{
+	this->visible = true;
+}
+
+bool Platform::hasPassed()
+{
+	return passed;
 }
 
 void Platform::reset()
