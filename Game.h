@@ -32,15 +32,18 @@ private:
 	void createNewPopulation();
 	void setupFontAndText();
 	void setupSprite();
+	void createFirstSwarm();
+	void createNextSwarm();
 
 	sf::RenderWindow m_window; // main SFML window
 	sf::Font m_ArialBlackfont; // font used by message
 	sf::Text m_welcomeMessage; // text used for message on screen
 	sf::Texture playerTexture; 
-	Area area1;
+	Area area1, area2;
 	Population population;
 	bool m_exitGame; // control exiting game
 	int genCount = 1;
+	int updateFrequency = 1;
 };
 
 #endif // !GAME_HPP

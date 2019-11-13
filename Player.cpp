@@ -52,6 +52,12 @@ Color Player::getColor()
 	return shape.getFillColor();
 }
 
+
+RectangleShape Player::getShape()
+{
+	return shape;
+}
+
 Vector2f Player::getPosition()
 {
 	return position;
@@ -86,6 +92,29 @@ float Player::getLenght()
 	return playerLenght;
 }
 
+void Player::jump()
+{
+	if (!jumping) {
+		up = !up;
+	}
+}
+
+void Player::falls()
+{
+	jumping = true;
+}
+
+void Player::reset()
+{
+	up = false;
+	dead = false;
+	position = Vector2f(10, 256);
+	fitness = 0;
+	nectarCounter = 0;
+	dna.step = 0;
+}
+
+//algorithm methods used in both algorithms
 float Player::calculateFitness()
 {
 	fitness *= 30000;
@@ -102,17 +131,7 @@ float Player::getFitness()
 	return fitness;
 }
 
-void Player::jump()
-{
-	if (!jumping) {
-		up = !up;
-	}
-}
-
-void Player::falls()
-{
-	jumping = true;
-}
+//Genetic algorithm methods
 
 void Player::useDNA(float dt)
 {
@@ -131,17 +150,14 @@ void Player::useDNA(float dt)
 
 }
 
-void Player::reset()
-{
-	up = false;
-	dead = false;
-	position = Vector2f(10, 256);
-
-}
 
 DNA Player::getDNA()
 {
 	return dna;
+}
+
+void Player::setDNA(DNA newDNA) {
+	this->dna = newDNA;
 }
 
 void Player::mutate(DNA &parentOne, DNA &parentTwo)
@@ -179,9 +195,16 @@ void Player::mutate(DNA parent)
 	}
 }
 
-RectangleShape Player::getShape()
+
+
+
+//ABC algorithm methods
+
+int Player::getNectarCounter()
 {
-	return shape;
+	return nectarCounter;
 }
 
-
+void Player::nectarPlusPlus() {
+	nectarCounter++;
+}

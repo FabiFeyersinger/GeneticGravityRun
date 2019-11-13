@@ -11,8 +11,10 @@ class Player
 	Vector2f position;
 	float gravity, speed, playerLenght = 32, fitness = 0, dtcounter = 0;
 	bool up = false, jumping = false, dead = false;
+	int nectarCounter = 0;
 
 public:
+	//common methods
 	float updatePosition(float);
 	void updateGravity(float);
 	void setColor(Color);
@@ -23,18 +25,28 @@ public:
 	bool isDead();
 	bool reachedGoal();
 	float getLenght();
-	float calculateFitness();
-	void normalizeFitness(float);
-	float getFitness();
 	void jump();
 	void falls();
-	void useDNA(float);
 	void reset();
-	DNA getDNA();
-	void mutate(DNA &parentOne, DNA &parentTwo);
-	void mutate(DNA parent);
 	RectangleShape getShape();
 	Player();
 	~Player();
+
+	//algorithm methods used in both algorithms
+	float calculateFitness();
+	void normalizeFitness(float);
+	float getFitness();
+	void useDNA(float);
+	DNA getDNA();
+	void setDNA(DNA);
+
+	//Genetic algorithm methods
+
+	void mutate(DNA &parentOne, DNA &parentTwo);
+	void mutate(DNA parent);
+
+	// ABC algorithm methods
+	int getNectarCounter();
+	void nectarPlusPlus();
 };
 

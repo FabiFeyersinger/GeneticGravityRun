@@ -15,4 +15,5 @@ C:\Users\fabif\source\repos\GeneticGravityRun\Population.h(4,10): warning C4067:
 C:\Users\fabif\source\repos\GeneticGravityRun\Population.h(5,10): warning C4067: Unerwartete Token nach Präprozessordirektive - Zeilenvorschub erwartet.
 C:\Users\fabif\source\repos\GeneticGravityRun\Population.h(6,10): warning C4067: Unerwartete Token nach Präprozessordirektive - Zeilenvorschub erwartet.
 C:\Users\fabif\source\repos\GeneticGravityRun\Game.cpp(27,13): warning C4244: "Argument": Konvertierung von "time_t" in "unsigned int", möglicher Datenverlust
+C:\Users\fabif\source\repos\GeneticGravityRun\Game.cpp(211,13): warning C4244: "Argument": Konvertierung von "time_t" in "unsigned int", möglicher Datenverlust
   GeneticGravityRun.vcxproj -> C:\Users\fabif\source\repos\GeneticGravityRun\x64\Debug\GeneticGravityRun.exe

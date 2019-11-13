@@ -30,6 +30,10 @@ Game::Game() :
 		population.players.push_back(player);
 		//std::cout << "PopulationMember Nr" << i << " : " << population.players[i].getDNA().inputs[0] << std::endl;
 	}
+
+	//BEE ALGORITHM ONLY
+	//population.generateFirstGeneration(population);
+
 }
 
 /// <summary>
@@ -62,7 +66,9 @@ void Game::run()
 		{
 			timeSinceLastUpdate -= timePerFrame;
 			processEvents(); // at least 60 fps
-			update(timePerFrame); //60 fps
+			for (int i = 0; i < updateFrequency; i++) {
+				update(timePerFrame); //60 fps
+			}
 		}
 		render(); // as many as possible
 	}
@@ -99,6 +105,13 @@ void Game::processKeys(sf::Event t_event)
 	{
 		m_exitGame = true;
 	}
+
+	if (sf::Keyboard::Up == t_event.key.code) {
+		updateFrequency++;
+	}
+	if (sf::Keyboard::Down == t_event.key.code) {
+		updateFrequency--;
+	}
 }
 
 /// <summary>
@@ -111,9 +124,17 @@ void Game::update(sf::Time dt)
 	{
 		m_window.close();
 	}
+	Area currentArea = area1;
+	if (area1.getPosition().x <= -2048) {
+		currentArea = area2;
+	}
+	else {
+		currentArea = area1;
+	}
 
-	population.update(dt.asSeconds(), area1);
-	area1.updatePosition(dt.asSeconds());
+	population.update(dt.asSeconds() / updateFrequency, currentArea);
+	area1.updatePosition(dt.asSeconds() / updateFrequency);
+	area2.updatePosition(dt.asSeconds() / updateFrequency);
 }
 
 /// <summary>
@@ -123,42 +144,29 @@ void Game::render()
 {
 	m_window.clear(sf::Color::Black);
 	m_window.draw(area1.getBackground());
+	m_window.draw(area2.getBackground());
 	if (population.allDotsDead()) {
-		createNewPopulation();
+		createNewPopulation(); //Genetic Algorithm
+		//createNextSwarm(); // ABC Algorithm
 		population.reset();
 		area1.reset();
+		area2.reset();
 	}
 	std::vector<Sprite> areaSprites = area1.drawBlocks();
 	for (int i = 0; i < areaSprites.size(); i++) {
 		m_window.draw(areaSprites[i]);
 	}
-	//areaSprites = area2.drawBlocks();
-	//for (int i = 0; i < areaSprites.size(); i++) {
-	//	m_window.draw(areaSprites[i]);
-	//}
+	areaSprites = area2.drawBlocks();
+	for (int i = 0; i < areaSprites.size(); i++) {
+		m_window.draw(areaSprites[i]);
+	}
 	for (int i = 0; i < population.players.size(); i++) {
 		m_window.draw(population.players[i].getShape());
 	}
 	m_window.display();
 }
 
-void Game::createNewPopulation()
-{
-	population.calculateFitness();
-	Population newGen = Population();
-	for (int i = 0; i < population.players.size(); i++) {
-		//std::cout << "PopulationMember Nr" << i << " : " << population.players[i].getDNA().inputs[0] << std::endl;
-		Player parentOne = population.naturalSelection(population);
-		Player parentTwo = population.naturalSelection(population);
-		Player child = population.mutate(parentOne, parentTwo);
-		//Player child = population.mutate(parentOne);
-		newGen.players.push_back(child);
-		//std::cout << i << " Child in Game.cpp jump: " << newGen.players[i].getDNA().inputs[0] << std::endl;
-	}
-	population.replace(newGen);
-	genCount++;
-	std::cout << "New Population: " << genCount << std::endl;
-}
+
 
 /// <summary>
 /// load the font and setup the text message for screen
@@ -181,10 +189,70 @@ void Game::setupSprite()
 	area1.addPlatform(5, Vector2f(1200, 0));
 	area1.addPlatform(5, Vector2f(1400, 300));
 	area1.addPlatform(5, Vector2f(1600, 480));
-	area1.addPlatform(9, Vector2f(1900, 0));
+	area1.addPlatform(9, Vector2f(1700, 0));
+	area1.addPlatform(4, Vector2f(1900, 400));
 
 
-	//area2.init(1, Vector2f(2048, 480));
-	//area2.addPlatform(5, Vector2f(2200, 0));
-	//
+	area2.init(1, Vector2f(2048, 480));
+	area2.addPlatform(10, Vector2f(200, 0));
+	area2.addPlatform(6, Vector2f(544, 480));
+	area2.addPlatform(6, Vector2f(600, 140));
+	area2.addPlatform(9, Vector2f(736, 0));
+	area2.addPlatform(5, Vector2f(1024, 480));
+	area2.addPlatform(5, Vector2f(1200, 0));
+	area2.addPlatform(5, Vector2f(1400, 300));
+	area2.addPlatform(5, Vector2f(1600, 480));
+	area2.addPlatform(9, Vector2f(1800, 0));
 }
+
+void Game::createFirstSwarm()
+{
+	for (int i = 0; i < 200; i++) {
+		srand(time(NULL));
+		Player player = Player();
+		player.setColor(sf::Color(rand() % 255, rand() % 255, rand() % 255));
+		population.players.push_back(player);
+		population.generateFirstGeneration(population);
+		//std::cout << "PopulationMember Nr" << i << " : " << population.players[i].getDNA().inputs[0] << std::endl;
+	}
+}
+
+void Game::createNextSwarm()
+{
+	population.calculateFitness();
+	int swarmSize = 200;
+	Population nextSwarm = Population();
+	Population employed = Population();
+	for (int i = 0; i < swarmSize; i++) {
+		Player employedBee = population.compareFitness(population.players[i], population.players[++i]);
+		employed.players.push_back(employedBee);
+	}
+	for (int i = 0; i < employed.players.size(); i++) {
+		Player onlooker = population.waggleDance(employed);
+		nextSwarm.players.push_back(onlooker);
+		Player candidate = employed.generateCanditate(employed, onlooker);
+		nextSwarm.players.push_back(candidate);
+	}
+	population.replace(nextSwarm);
+	genCount++;
+	std::cout << "New Swarm: " << genCount << std::endl;
+}
+
+void Game::createNewPopulation()
+{
+	population.calculateFitness();
+	Population newGen = Population();
+	for (int i = 0; i < population.players.size(); i++) {
+		//std::cout << "PopulationMember Nr" << i << " : " << population.players[i].getDNA().inputs[0] << std::endl;
+		Player parentOne = population.naturalSelection(population);
+		Player parentTwo = population.naturalSelection(population);
+		Player child = population.mutate(parentOne, parentTwo);
+		//Player child = population.mutate(parentOne);
+		newGen.players.push_back(child);
+		//std::cout << i << " Child in Game.cpp jump: " << newGen.players[i].getDNA().inputs[0] << std::endl;
+	}
+	population.replace(newGen);
+	genCount++;
+	std::cout << "New Population: " << genCount << std::endl;
+}
+

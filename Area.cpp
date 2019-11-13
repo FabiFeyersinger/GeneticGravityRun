@@ -28,6 +28,7 @@ void Area::init(int size, Vector2f position)
 		platforms[i].init(10, Vector2f(position.x, position.y + i *64), false);
 	}
 	this->position = position;
+	background.setPosition(position.x, 0);
 	originalPosition = calculatePlatformPosition(position);
 	originalPosition.y = 0;
 	std::cout << "Area created \n";
@@ -55,6 +56,7 @@ void Area::addPlatform(int size, Vector2f position)
 {
 	bool isCeiling = true;
 	position = calculatePlatformPosition(position);
+	position += originalPosition; // For different Areas
 	std::vector<Platform> oldPlatforms = platforms;
 	if (position.y >= 256) isCeiling = false;
 	int formerSize = platforms.size();
@@ -137,6 +139,7 @@ float Area::lenght(Vector2f vector) {
 void Area::reset()
 {
 	background.setPosition(originalPosition);
+	this->position = originalPosition;
 	alreadyPassedPlatforms = 0;
 	for (int i = 0; i < platforms.size(); i++) {
 		platforms[i].reset();
