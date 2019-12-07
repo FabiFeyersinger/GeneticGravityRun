@@ -13,14 +13,15 @@ public:
 	float fitnessSum = 0;
 	int size = 200;
 	Player champ;
-	Player mutate(Player& parent);
 	void update(float, Area& area);
 	void reset();
 	void replace(Population& newGen);
 	bool allDotsDead();
 	Population() {};
+	float getFitnessSum() { return fitnessSum; };
+	float getFitnessAverage() { return fitnessSum / size; };
 	Population(int);
-
+	Player getChamp() { return champ; };
 	
 	~Population();
 
@@ -31,8 +32,8 @@ public:
 	Player mutate(Player &parentOne, Player &parentTwo);
 
 	//ABC algorithm methods
-	void generateFirstGeneration(Population &pop);
 	Player compareFitness(Player& employed, Player& candidate);
 	Player generateCanditate(Population& pop, Player& employedBee);
 	Player waggleDance(Population& pop);
+	void abandonFoodResource(Population& pop, Player& champ);
 };

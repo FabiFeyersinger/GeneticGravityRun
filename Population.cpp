@@ -1,6 +1,8 @@
 #include "Population.h"
 
-
+/*
+Constructor that initializes players according to the size that is desired
+*/
 Population::Population(int size)
 {
 	this->size = size;
@@ -10,19 +12,27 @@ Population::Population(int size)
 	}
 }
 
+/*
+Destructor
+*/
 Population::~Population()
 {
 }
 
+/*
+update method 
+*/
 void Population::update(float dt, Area& area)
 {
 	for (int i = 0; i < players.size(); i++) {
-		players[i].updatePosition(dt);
-		area.check4Collision(players[i]);
+		players[i].updatePosition(dt); // update all Players
+		area.check4Collision(players[i]); // check every Player if it collides with a Platform of the area they are in
 	}
 
 }
-
+/*
+reset function if a population has finished
+*/
 void Population::reset()
 {
 	fitnessSum = 0;
@@ -31,109 +41,107 @@ void Population::reset()
 	}
 }
 
+/*
+replaces the old population with the new one
+*/
 void Population::replace(Population& newGen)
 {
 	for (int i = 0; i < players.size(); i++) {
 		players[i] = newGen.players[i];
-		players[i].setColor(newGen.players[i].getColor());
+		players[i].setColor(newGen.players[i].getColor()); // this is called to ensure that the color gets into the next generation, sometime it did not work
 	}
 }
 
+/*
+checks if all players are dead
+*/
 bool Population::allDotsDead()
 {
 	for (int i = 0; i < players.size(); i++) {
-		if (!players[i].isDead() && !players[i].reachedGoal()) return false;
+		if (!players[i].isDead() && !players[i].reachedGoal()) return false; // if one player is not dead and has not reached the end the loop breaks
 	}
-
 	return true;
 }
 
-//methods both algorithm use
+/*
+
+methods both algorithm use
+
+*/
+
+/*
+calculates fitness
+*/
 void Population::calculateFitness()
 {
+	float fitnessScore = fitnessSum;
 	for (int i = 0; i < players.size(); i++) {
-		if (players[i].getFitness() > champ.getFitness()) champ = players[i];
-		fitnessSum += players[i].calculateFitness();
+		if (players[i].getFitness() > champ.getFitness()) champ = players[i]; champ.crown(sf::Color::Red);
+		fitnessScore += players[i].calculateFitness(); //Fitness Calculation can differ from the actual fitness this is why here are two floats
+		fitnessSum += players[i].getFitness();
 	}
+
 	for (int i = 0; i < players.size(); i++) {
-		players[i].normalizeFitness(fitnessSum);
+		players[i].normalizeFitness(fitnessScore); // score gets normalized so all fitness values now sum up to 1
 	}
-	std::cout << "Fitness average: " << fitnessSum / 200 << std::endl;
+	std::cout << "FitnessSum: " << fitnessSum / players.size() << std::endl;
 }
 
 
 
 
 
-//Genetic algorithm methods
+/*
+
+Genetic algorithm methods
+
+*/
+
+
+/*
+Natural Selection
+*/
 Player Population::naturalSelection(Population &pop)
 {
 	std::chrono::microseconds ms = std::chrono::duration_cast<std::chrono::microseconds>(std::chrono::system_clock::now().time_since_epoch());
-	srand(ms.count());
-	float pool = (float)(rand() % 10000) / 10000.f;
+	srand(ms.count()); //Seed to make random numbers unique as otherwise c++ always produces the same "random" numbers
+	float pool = (float)(rand() % 10000) / 10000.f; // generate number between 0 and 1
 	for (int i = 0; i < pop.players.size(); i++) {
-		if (pop.players[i].getFitness() > pool) {
-			//std::cout << "Parent First jump :" << players[i].getDNA().inputs[0] << std::endl;
+		if (pop.players[i].getFitness() > pool) { // if generated number is lower than the players fitness choose this player
 			return pop.players[i];
 		}
 		else {
-			pool -= pop.players[i].getFitness();
+			pool -= pop.players[i].getFitness(); // otherwise substract this players fitness from the generated number
 		}
 	}
-	return champ;
+	return champ; // it should never reach this point, but if it does return the champ
 }
 
+/*
+Crossover and Mutation in one method to reduce overhead
+*/
 Player Population::mutate(Player &parentOne, Player &parentTwo)
 {
-	Player child = Player();
-	//std::cout << "Color ParentOne:" << parentOne.getColor().toInteger() << std::endl;
-	child.setColor(parentOne.getColor());
-	//std::cout << "Color Child:" << child.getColor().toInteger() << std::endl;
+	Player child = Player(); 
+	child.setColor(parentOne.getColor()); // inherit color of parent one
 	DNA DNA1 = parentOne.getDNA();
 	DNA DNA2 = parentTwo.getDNA();
 	child.mutate(DNA1, DNA2);
 	return child;
 }
 
-Player Population::mutate(Player& parent)
-{
-	Player child = Player();
-	//std::cout << "Color ParentOne:" << parentOne.getColor().toInteger() << std::endl;
-	child.setColor(parent.getColor());
-	//std::cout << "Color Child:" << child.getColor().toInteger() << std::endl;
-	child.mutate(parent.getDNA());
-	std::cout << parent.getDNA().inputs[0] << std::endl;
-	std::cout << child.getDNA().inputs[0] << std::endl;
-	return child;
-}
 
 
 
-// ABC algorithm methods
+/* 
 
-void Population::generateFirstGeneration(Population& pop)
-{
-	std::chrono::microseconds ms = std::chrono::duration_cast<std::chrono::microseconds>(std::chrono::system_clock::now().time_since_epoch());
-	srand(ms.count());
-	for (int i = 0; i < pop.players.size(); i++) {
-		DNA newCandidate = DNA(100);
-		for (int j = 0; j < pop.players[i].getDNA().getLenght(); j++) {
-			int randomPartner = rand() % size;
-			while (randomPartner == i) {
-				randomPartner = rand() % size;
-			}
+ABC algorithm methods 
 
-			float phi = rand() % 10000;
-			phi = (phi / 5000.f) - 1.f;
+*/
 
-			newCandidate.inputs[j] = pop.players[i].getDNA().inputs[j] + phi * (pop.players[i].getDNA().inputs[j] - pop.players[randomPartner].getDNA().inputs[j]);
-		}
-		pop.players[++i].setDNA(newCandidate);
-		
-
-	}
-}
-
+/*
+compares Fitness of employed bee and its candidate solution, returns the better one
+*/
 Player Population::compareFitness(Player& employed, Player& candidate)
 {
 	if (employed.getFitness() > candidate.getFitness()) {
@@ -144,34 +152,53 @@ Player Population::compareFitness(Player& employed, Player& candidate)
 	}
 }
 
-
+/*
+each bee creates a candidate solution to see if it improves the path it choose from the waggle dance
+*/
 Player Population::generateCanditate(Population& pop, Player& employedBee) {
 	std::chrono::microseconds ms = std::chrono::duration_cast<std::chrono::microseconds>(std::chrono::system_clock::now().time_since_epoch());
-	srand(ms.count());
-	Player candidate = Player();
+	srand(ms.count()); // random seed
+	Player candidate = employedBee;
 	candidate.setColor(employedBee.getColor());
-	DNA newCandidate = DNA(100);
-	for (int j = 0; j < employedBee.getDNA().getLenght(); j++) {
-		int randomPartner = rand() % size / 2;
+	DNA newCandidate = employedBee.getDNA();
+	int randomPartner = rand() % size / 2; // gets a random other path to make adjustments
+	int randomInput = rand() % (employedBee.getDNA().getStep() + 1); // changes an input between the first one and the last one the employed bee used before
+	if (pop.players[randomPartner].getNectarCounter() < 20 - champ.getStep()) { // if one bees solution is choosen to often, the bees become scouts
+		float phi = rand() % 10000;
+		phi = (phi / 5000.f) - 1.f;
 
-		if (pop.players[randomPartner].getNectarCounter() < 110) {
-			float phi = rand() % 10000;
-			phi = (phi / 5000.f) - 1.f;
+		newCandidate.inputs[randomInput] = employedBee.getDNA().inputs[randomInput] + phi * (employedBee.getDNA().inputs[randomInput] - pop.players[randomPartner].getDNA().inputs[randomInput]);
+		pop.players[randomPartner].nectarPlusPlus(); 
+	}
+	else {
+		newCandidate.randomize(randomInput);
+	}
 
-			newCandidate.inputs[j] = employedBee.getDNA().inputs[j] + phi * (employedBee.getDNA().inputs[j] - pop.players[randomPartner].getDNA().inputs[j]);
-			pop.players[randomPartner].nectarPlusPlus();
-		}
-		else {
-			//std::cout << "Nectar Capacity reached \n";
-			newCandidate.inputs[j] = (float)(rand() % employedBee.getDNA().getPosV()) / employedBee.getDNA().getDivider();
-		}
-}
 	candidate.setDNA(newCandidate);
 
 	return candidate;
 }
 
+/*
+basically Natural Selection
+*/
 Player Population::waggleDance(Population& pop)
 {
 	return this->naturalSelection(pop);
+}
+
+/*
+Emergency behaviour if the swarm is not able to improve over a certain amount of cycles
+*/
+void Population::abandonFoodResource(Population& pop, Player& champ)
+{
+	std::chrono::microseconds ms = std::chrono::duration_cast<std::chrono::microseconds>(std::chrono::system_clock::now().time_since_epoch());
+	srand(ms.count()); //random seed
+	DNA champDNA = champ.getDNA();
+	for (int i = 0; i < pop.players.size(); i++) { // each bee searches a new food resource at the point before the champ got stuck
+		float phi = rand() % 10000;
+		phi = phi / 10000.f;
+		pop.players[i].setDNA(champDNA.getStep() - 1, champDNA.getLowerBound() + phi * (champDNA.getUpperBound() - champDNA.getLowerBound()));
+	}
+
 }

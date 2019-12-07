@@ -1,26 +1,20 @@
-/// <summary>
-/// author Pete Lowe May 2019
-/// you need to change the above line or lose marks
-/// </summary>
+
 #ifndef GAME_HPP
 #define GAME_HPP
-/// <summary>
-/// include guards used so we don't process this file twice
-/// same as #pragma once
-/// Don't forget the endif at the bottom
-/// </summary>
 #include <SFML/Graphics.hpp>
+#include <nlohmann/json.hpp>
+#include <fstream>
+#include <iomanip>
 #include "Area.h";
 #include "Population.h";
+
+using json = nlohmann::json;
 
 class Game
 {
 public:
 	Game();
 	~Game();
-	/// <summary>
-	/// main method for game
-	/// </summary>
 	void run();
 
 private:
@@ -28,23 +22,49 @@ private:
 	void processEvents();
 	void processKeys(sf::Event t_event);
 	void update(sf::Time t_deltaTime);
+	void updatePopulation(sf::Time t_deltaTime);
 	void render();
 	void createNewPopulation();
-	void setupFontAndText();
 	void setupSprite();
-	void createFirstSwarm();
 	void createNextSwarm();
+	void showImprovement();
+	void renderJSON();
+	void resetAreas();
+	void updateJSON(sf::Time);
+	void prepareForWatchmode();
+	void showInstructions();
 
-	sf::RenderWindow m_window; // main SFML window
-	sf::Font m_ArialBlackfont; // font used by message
-	sf::Text m_welcomeMessage; // text used for message on screen
+	json averageScores = { {"start", "today" } };
+	sf::RenderWindow m_window;
+	sf::Font m_ArialBlackfont;
+	sf::Text m_welcomeMessage;
 	sf::Texture playerTexture; 
-	Area area1, area2;
-	Population population;
-	bool m_exitGame; // control exiting game
+	sf::VertexArray graphArray;
+	sf::Image graph;
+
+	Area area1, area2, area3, area4, area5;
+	std::vector<Area> areas;
+
+	Population population, newGen;
+	bool m_exitGame;
+	bool visualize;
+	bool gameIsFinished = false;
+	bool watchmode = false;
+	int genWithMaxFitness = 0;
 	int genCount = 1;
-	int updateFrequency = 1;
+	int gameDuration = 0;
+	int updateFrequency = 15;
+	float maxGenAverage = 1.f;
+	int limit = 1;
+	int progress = 0;
+
+	bool abc = true;
+	bool elite = false;
+	bool instructionsshown = false;
+	std::string algorithmName;
+	std::string jsonFileName = "nothing";
+	std::ifstream ifs;
 };
 
-#endif // !GAME_HPP
+#endif
 

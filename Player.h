@@ -28,6 +28,9 @@ public:
 	void jump();
 	void falls();
 	void reset();
+	void crown(sf::Color);
+	int getStep() { return dna.getStep(); };
+	void setStep(int i) { dna.setStep(i); };
 	RectangleShape getShape();
 	Player();
 	~Player();
@@ -39,11 +42,11 @@ public:
 	void useDNA(float);
 	DNA getDNA();
 	void setDNA(DNA);
+	void setDNA(int, float);
 
 	//Genetic algorithm methods
 
 	void mutate(DNA &parentOne, DNA &parentTwo);
-	void mutate(DNA parent);
 
 	// ABC algorithm methods
 	int getNectarCounter();
