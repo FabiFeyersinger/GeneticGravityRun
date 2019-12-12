@@ -4,7 +4,6 @@
 #include <iostream>
 
 
-
 /*
 Default constructor for the game
 Initializes Window, Population and Sprites
@@ -21,10 +20,8 @@ Game::Game() :
 		player.setColor(sf::Color(rand() % 255, rand() % 255, rand() % 255));
 		population.players.push_back(player);
 	}
-
 	newGen = Population(200); // initializes newGen for later use
 }
-
 
 /* 
 default destructor
@@ -395,12 +392,12 @@ void Game::createNextSwarm()
 
 	population.replace(newGen);  // the new Population now gets to replace the old one
 	float averageScore = population.getFitnessAverage();
-	if (averageScore > maxGenAverage + 0.01) { maxGenAverage = averageScore; genWithMaxFitness = genCount; }  // if the score of the current population is higher than the best one it replaces the best one
 	averageScores["Population " + std::to_string(genCount)] = averageScore;  // add Average score of this population to JSON object
 	averageScores["Champ at " + std::to_string(genCount)] = population.getChamp().getFitness();  // Add score of current champ to JSON object (current champ can be not from current population)
 	genCount++;
 	std::cout << "New Swarm: " << genCount << std::endl;
 
+	if (averageScore > maxGenAverage + 0.01) { maxGenAverage = averageScore; genWithMaxFitness = genCount; }  // if the score of the current population is higher than the best one it replaces the best one
 	if (genCount > genWithMaxFitness + limit) {  // if there is a local maxima, this function deals with it
 		population.abandonFoodResource(population, champ);  // last input is forgotten and every bee needs to find a different input
 		std::cout << "Food Source abandond \n";
@@ -435,6 +432,7 @@ void Game::createNewPopulation()
 {
 	population.calculateFitness();  // fitness calculation and normalization
 	int start = 0;
+	Player champ = population.getChamp();
 	if (elite) {
 		newGen.players[0] = population.getChamp(); // if elitism is activated champ gets to new gen
 		start = 1;
@@ -447,11 +445,12 @@ void Game::createNewPopulation()
 	}
 	population.replace(newGen);  // replace old population with new one
 	float averageScore = population.getFitnessAverage();  // from now on out same as ABC
-	if (averageScore > maxGenAverage) maxGenAverage = averageScore; genWithMaxFitness = genCount;
 	averageScores["Population " + std::to_string(genCount)] = averageScore;
 	averageScores["Champ at " + std::to_string(genCount)] = population.getChamp().getFitness();
 	genCount++;
 	std::cout << "New Population: " << genCount << std::endl;
+
+	if (averageScore > maxGenAverage + 0.01) { maxGenAverage = averageScore; genWithMaxFitness = genCount; }  // if the score of the current population is higher than the best one it replaces the best one
 
 	if (gameDuration >= 2048 * areas.size()) {
 		m_exitGame = true;

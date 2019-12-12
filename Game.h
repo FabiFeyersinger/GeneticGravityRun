@@ -53,12 +53,12 @@ private:
 	int genWithMaxFitness = 0;
 	int genCount = 1;
 	int gameDuration = 0;
-	int updateFrequency = 15;
+	int updateFrequency = 1;
 	float maxGenAverage = 1.f;
 	int limit = 1;
 	int progress = 0;
 
-	bool abc = true;
+	bool abc = false;
 	bool elite = false;
 	bool instructionsshown = false;
 	std::string algorithmName;

@@ -151,7 +151,7 @@ void Player::mutate(DNA &parentOne, DNA &parentTwo)
 {
 	std::chrono::microseconds ms = std::chrono::duration_cast<std::chrono::microseconds>(std::chrono::system_clock::now().time_since_epoch());
 	srand(ms.count()); //random seed
-	float mutationRate = 0.01;
+	float mutationRate = 0.02;
 	for (int i = 0; i < dna.getLenght(); i++) { // uniform crossover, each input is independly decided from which parent it is
 		if (rand() % 2) setDNA(i, parentOne.inputs[i]);
 		else setDNA(i, parentTwo.inputs[i]);
